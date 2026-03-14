@@ -189,6 +189,7 @@
 
 <script>
 const FEISHU_WEBHOOK = 'https://open.feishu.cn/open-apis/bot/v2/hook/abd71fb1-47f9-4d7d-a5fc-623b36a18f37';
+const BITABLE_WORKER = 'https://feishu-lead-writer.huwenshu.workers.dev';
 
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -245,13 +246,30 @@ async function submitLead() {
   ].filter(Boolean).join('\n');
 
   try {
-    await fetch(FEISHU_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ msg_type: 'text', content: { text: content } }),
-      mode: 'no-cors'
-    });
-    showToast('✅ 线索已推送到飞书！');
+    // 同时推送飞书群通知 + 写入多维表格
+    await Promise.all([
+      fetch(FEISHU_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ msg_type: 'text', content: { text: content } }),
+        mode: 'no-cors'
+      }),
+      fetch(BITABLE_WORKER, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: username,
+          phone: getVal('f-phone') || '',
+          region: getVal('f-region') || '未确定',
+          area: getVal('f-area') || '',
+          platform: platform,
+          desc: desc,
+          url: getVal('f-url') || '',
+          note: getVal('f-note') || '',
+        }),
+      })
+    ]);
+    showToast('✅ 线索已推送飞书并写入多维表格！');
     // 清空表单
     ['f-platform','f-username','f-url','f-desc','f-area','f-budget','f-region','f-note'].forEach(id => {
       const el = document.getElementById(id);

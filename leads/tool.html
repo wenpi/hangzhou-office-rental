@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线索收集 - 办公室出租</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'PingFang SC','Microsoft YaHei',sans-serif; background: #f0f4f8; min-height: 100vh; padding: 16px; }
+    .container { max-width: 680px; margin: 0 auto; }
+    h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: #1a1a1a; }
+    .subtitle { color: #6b7280; font-size: 13px; margin-bottom: 20px; }
+
+    /* 搜索链接区 */
+    .search-section { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #e5e7eb; }
+    .search-section h2 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: #374151; }
+    .platform-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tab { padding: 5px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151; }
+    .tab.active { background: #1a56db; color: #fff; border-color: #1a56db; }
+    .links-grid { display: none; flex-direction: column; gap: 6px; }
+    .links-grid.active { display: flex; }
+    .search-link { display: block; padding: 8px 12px; background: #f1f5f9; border-radius: 8px; font-size: 13px; color: #1a56db; text-decoration: none; border: 1px solid #e2e8f0; }
+    .search-link:hover { background: #dbeafe; }
+
+    /* 线索表单区 */
+    .form-section { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e5e7eb; }
+    .form-section h2 { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: #1a1a1a; display: flex; align-items: center; gap: 6px; }
+    .form-row { margin-bottom: 12px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+    label .req { color: #ef4444; }
+    input, select, textarea { width: 100%; padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #1a1a1a; background: #fff; outline: none; transition: border-color 0.15s; }
+    input:focus, select:focus, textarea:focus { border-color: #1a56db; box-shadow: 0 0 0 3px rgba(26,86,219,0.1); }
+    textarea { resize: vertical; min-height: 72px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn-submit { width: 100%; padding: 13px; background: #1a56db; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: background 0.15s; }
+    .btn-submit:hover { background: #1341b0; }
+    .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    /* 话术快捷复制 */
+    .scripts-section { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #e5e7eb; }
+    .scripts-section h2 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: #374151; }
+    .script-item { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; color: #374151; line-height: 1.6; position: relative; }
+    .script-label { font-weight: 700; color: #1a56db; font-size: 12px; margin-bottom: 4px; }
+    .btn-copy { position: absolute; top: 8px; right: 8px; padding: 3px 10px; background: #1a56db; color: #fff; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .btn-copy.copied { background: #10b981; }
+
+    /* 提示 */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📋 线索收集工具</h1>
+  <p class="subtitle">找到求租帖子 → 复制话术回复 → 填写线索 → 自动推送飞书</p>
+
+  <!-- 搜索链接 -->
+  <div class="search-section">
+    <h2>🔍 今日搜索链接</h2>
+    <div class="platform-tabs">
+      <div class="tab active" onclick="switchTab('xhs')">📕 小红书</div>
+      <div class="tab" onclick="switchTab('dy')">🎵 抖音</div>
+      <div class="tab" onclick="switchTab('wb')">🐦 微博</div>
+      <div class="tab" onclick="switchTab('tb')">🔍 贴吧</div>
+    </div>
+    <div id="tab-xhs" class="links-grid active">
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=临平+办公室+求租" target="_blank">临平 办公室 求租</a>
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=临平+工位+找" target="_blank">临平 工位 找</a>
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=临平+办公场地" target="_blank">临平 办公场地</a>
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=临平区+创业+办公" target="_blank">临平区 创业 办公</a>
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=拱墅+办公室+求租" target="_blank">拱墅 办公室 求租</a>
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=拱墅区+办公场地" target="_blank">拱墅区 办公场地</a>
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=崇贤+办公室" target="_blank">崇贤 办公室</a>
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=杭州北+办公室+求租" target="_blank">杭州北 办公室 求租</a>
+      <a class="search-link" href="https://www.xiaohongshu.com/search_result?keyword=杭州+联合办公+求推荐" target="_blank">杭州 联合办公 求推荐</a>
+    </div>
+    <div id="tab-dy" class="links-grid">
+      <a class="search-link" href="https://www.douyin.com/search/临平+办公室+求租" target="_blank">临平 办公室 求租</a>
+      <a class="search-link" href="https://www.douyin.com/search/临平+办公场地" target="_blank">临平 办公场地</a>
+      <a class="search-link" href="https://www.douyin.com/search/拱墅+办公室+求租" target="_blank">拱墅 办公室 求租</a>
+      <a class="search-link" href="https://www.douyin.com/search/崇贤+办公室" target="_blank">崇贤 办公室</a>
+      <a class="search-link" href="https://www.douyin.com/search/杭州北+创业+办公室" target="_blank">杭州北 创业 办公室</a>
+    </div>
+    <div id="tab-wb" class="links-grid">
+      <a class="search-link" href="https://s.weibo.com/weibo?q=临平+办公室+求租&typeall=1&suball=1" target="_blank">临平 办公室 求租</a>
+      <a class="search-link" href="https://s.weibo.com/weibo?q=拱墅+办公室+求租&typeall=1&suball=1" target="_blank">拱墅 办公室 求租</a>
+      <a class="search-link" href="https://s.weibo.com/weibo?q=杭州+联合办公+求推荐&typeall=1&suball=1" target="_blank">杭州 联合办公 求推荐</a>
+    </div>
+    <div id="tab-tb" class="links-grid">
+      <a class="search-link" href="https://tieba.baidu.com/f/search/res?qw=临平+办公室+求租" target="_blank">临平 办公室 求租</a>
+      <a class="search-link" href="https://tieba.baidu.com/f/search/res?qw=拱墅+办公室+求租" target="_blank">拱墅 办公室 求租</a>
+      <a class="search-link" href="https://tieba.baidu.com/f/search/res?qw=崇贤+办公室" target="_blank">崇贤 办公室</a>
+    </div>
+  </div>
+
+  <!-- 话术 -->
+  <div class="scripts-section">
+    <h2>💬 回复话术（点击复制）</h2>
+    <div class="script-item">
+      <div class="script-label">通用话术</div>
+      您好！看到您在找办公场地，我们在临平区和拱墅区有多个优质园区：🏢 丁兰数创智慧谷（临平区）🌟 星云城（拱墅区）🏙️ 崇贤社区（拱墅区）独立办公室/工位均有，可注册地址，拎包入驻，园区直租无中介。联系我：18868807854（微信同号）
+      <button class="btn-copy" onclick="copyScript(this)">复制</button>
+    </div>
+    <div class="script-item">
+      <div class="script-label">临平话术</div>
+      您好！看到您在找临平区办公场地，我们正好在临平区有丁兰数创智慧谷，独立办公室/工位均有，可注册地址，拎包入驻，园区直租无中介费。欢迎来看看：18868807854（微信同号）
+      <button class="btn-copy" onclick="copyScript(this)">复制</button>
+    </div>
+    <div class="script-item">
+      <div class="script-label">拱墅话术</div>
+      您好！看到您在找拱墅区办公场地，我们在拱墅有星云城和崇贤社区两个园区，多种面积可选，灵活租期，可注册地址，园区直租。欢迎来看看：18868807854（微信同号）
+      <button class="btn-copy" onclick="copyScript(this)">复制</button>
+    </div>
+    <div class="script-item">
+      <div class="script-label">初创/工作室话术</div>
+      您好！我们特别适合初创团队，短租3个月起，拎包入驻当天可用，可提供工商注册地址，临平区/拱墅区均有房源，价格实惠。欢迎来看看：18868807854（微信同号）
+      <button class="btn-copy" onclick="copyScript(this)">复制</button>
+    </div>
+  </div>
+
+  <!-- 线索填报表单 -->
+  <div class="form-section">
+    <h2>➕ 记录线索</h2>
+    <div class="form-row">
+      <label>来源平台 <span class="req">*</span></label>
+      <select id="f-platform">
+        <option value="">请选择</option>
+        <option>小红书</option>
+        <option>抖音</option>
+        <option>微博</option>
+        <option>百度贴吧</option>
+        <option>其他</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>用户名 <span class="req">*</span></label>
+      <input id="f-username" type="text" placeholder="@用户名 或 昵称">
+    </div>
+    <div class="form-row">
+      <label>帖子链接</label>
+      <input id="f-url" type="text" placeholder="https://...">
+    </div>
+    <div class="form-row">
+      <label>需求描述 <span class="req">*</span></label>
+      <textarea id="f-desc" placeholder="例：找临平区10人左右独立办公室，预算5000-8000/月"></textarea>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>面积需求</label>
+        <input id="f-area" type="text" placeholder="例：50-80㎡">
+      </div>
+      <div class="form-row">
+        <label>预算</label>
+        <input id="f-budget" type="text" placeholder="例：5000-8000/月">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>区域偏好</label>
+        <select id="f-region">
+          <option value="">不限</option>
+          <option>临平区</option>
+          <option>拱墅区</option>
+          <option>均可</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>使用话术</label>
+        <select id="f-script">
+          <option>通用话术</option>
+          <option>临平话术</option>
+          <option>拱墅话术</option>
+          <option>初创/工作室话术</option>
+          <option>未回复</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>备注</label>
+      <input id="f-note" type="text" placeholder="其他补充信息">
+    </div>
+    <button class="btn-submit" id="btn-submit" onclick="submitLead()">📤 提交线索到飞书</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FEISHU_WEBHOOK = 'https://open.feishu.cn/open-apis/bot/v2/hook/abd71fb1-47f9-4d7d-a5fc-623b36a18f37';
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.links-grid').forEach(g => g.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function copyScript(btn) {
+  const text = btn.parentElement.childNodes[2].textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '已复制';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function getVal(id) { return document.getElementById(id).value.trim(); }
+
+async function submitLead() {
+  const platform = getVal('f-platform');
+  const username = getVal('f-username');
+  const desc = getVal('f-desc');
+  if (!platform || !username || !desc) {
+    showToast('⚠️ 请填写平台、用户名和需求描述');
+    return;
+  }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('zh-CN') + ' ' + now.toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'});
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = '提交中...';
+
+  const content = [
+    `📌 **新线索** | ${dateStr}`,
+    `**平台：** ${platform}`,
+    `**用户：** ${username}`,
+    getVal('f-url') ? `**链接：** ${getVal('f-url')}` : null,
+    `**需求：** ${desc}`,
+    getVal('f-area') ? `**面积：** ${getVal('f-area')}` : null,
+    getVal('f-budget') ? `**预算：** ${getVal('f-budget')}` : null,
+    getVal('f-region') ? `**区域：** ${getVal('f-region')}` : null,
+    `**话术：** ${getVal('f-script')}`,
+    getVal('f-note') ? `**备注：** ${getVal('f-note')}` : null,
+  ].filter(Boolean).join('\n');
+
+  try {
+    await fetch(FEISHU_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ msg_type: 'text', content: { text: content } }),
+      mode: 'no-cors'
+    });
+    showToast('✅ 线索已推送到飞书！');
+    // 清空表单
+    ['f-platform','f-username','f-url','f-desc','f-area','f-budget','f-region','f-note'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = el.tagName === 'SELECT' ? '' : '';
+    });
+  } catch(e) {
+    showToast('❌ 推送失败，请检查网络');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📤 提交线索到飞书';
+}
+</script>
+</body>
+</html>

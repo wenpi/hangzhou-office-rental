@@ -195,25 +195,30 @@
   <!-- Slide 6: 飞书推送 -->
   <div class="slide slide-6">
     <div class="tag">第三层 · 线索推送</div>
-    <h2>飞书机器人实时通知</h2>
-    <div class="cards col3" style="margin-top:32px;">
+    <h2>飞书实时通知 + 多维表格自动存档</h2>
+    <div class="cards col2" style="margin-top:28px; max-width:860px;">
       <div class="card">
         <div class="card-icon">⚡</div>
-        <h3>实时推送</h3>
-        <p>填写线索后一键提交，飞书群秒级收到通知，不漏掉任何一条线索</p>
+        <h3>飞书群实时推送</h3>
+        <p>填写线索后一键提交，飞书群秒级收到通知，联系人/电话/意向园区/需求面积一目了然</p>
       </div>
       <div class="card">
         <div class="card-icon">📊</div>
-        <h3>结构化记录</h3>
-        <p>客户姓名/联系方式/需求面积/意向园区，标准化格式，方便后续跟进</p>
+        <h3>多维表格自动写入</h3>
+        <p>每条线索同步写入飞书多维表格，含联系人、电话、意向园区、需求面积、来源平台、跟进状态字段</p>
       </div>
       <div class="card">
-        <div class="card-icon">📝</div>
-        <h3>任务日志</h3>
-        <p>每次任务完成自动推送执行日志到飞书群，团队协作透明高效</p>
+        <div class="card-icon">☁️</div>
+        <h3>Cloudflare Worker 中转</h3>
+        <p>浏览器无法直接调飞书 API，通过 Cloudflare Worker 无服务器中转，零成本、高可用，解决跨域问题</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h3>双写并行</h3>
+        <p>提交一次，同时触发：① 飞书群消息通知 ② 多维表格记录新增，线索永不丢失，随时可筛选导出</p>
       </div>
     </div>
-    <p class="sub" style="margin-top:24px;">Webhook已配置并测试通过 · 无需额外开发</p>
+    <p class="sub" style="margin-top:20px;">Webhook + Bitable 已配置并测试通过 · 无需额外开发</p>
   </div>
 
   <!-- Slide 7: 多平台分发 -->
@@ -248,7 +253,7 @@
   <div class="slide slide-8">
     <div class="tag">项目成果</div>
     <h2>已完成交付</h2>
-    <div class="result-grid" style="margin-top:28px;">
+    <div class="result-grid" style="margin-top:28px; grid-template-columns: 1fr 1fr 1fr; max-width:900px;">
       <div class="result-item">
         <div class="label">SEO网站</div>
         <div class="value">4 个页面</div>
@@ -273,6 +278,11 @@
         <div class="label">飞书推送</div>
         <div class="value">实时</div>
         <div class="desc">线索秒级通知到群</div>
+      </div>
+      <div class="result-item">
+        <div class="label">多维表格</div>
+        <div class="value">自动存档</div>
+        <div class="desc">Cloudflare Worker 中转写入</div>
       </div>
       <div class="result-item">
         <div class="label">内容发布</div>

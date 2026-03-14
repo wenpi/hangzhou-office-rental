@@ -1,0 +1,71 @@
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #1a1a1a; line-height: 1.6; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+/* ===== Variables ===== */
+:root {
+  --primary: #1a56db;
+  --primary-dark: #1341b0;
+  --accent: #f59e0b;
+  --text: #1a1a1a;
+  --text-muted: #6b7280;
+  --bg-light: #f8fafc;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* ===== Nav ===== */
+.nav { background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.nav-logo { font-size: 18px; font-weight: 700; color: var(--primary); }
+.nav-cta { background: var(--primary); color: #fff; padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+.nav-cta:hover { background: var(--primary-dark); }
+
+/* ===== Hero ===== */
+.hero { background: linear-gradient(135deg, #1a56db 0%, #1e40af 100%); color: #fff; padding: 80px 20px 60px; text-align: center; }
+.hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+.hero p { font-size: clamp(16px, 2vw, 20px); opacity: 0.9; max-width: 600px; margin: 0 auto 32px; }
+.hero-badges { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
+.badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 6px 16px; border-radius: 20px; font-size: 14px; }
+.hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-primary { background: var(--accent); color: #1a1a1a; padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 700; }
+.btn-secondary { background: rgba(255,255,255,0.15); color: #fff; border: 2px solid rgba(255,255,255,0.5); padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600; }
+
+/* ===== Section ===== */
+.section { padding: 64px 20px; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-title { font-size: clamp(22px, 3vw, 32px); font-weight: 700; text-align: center; margin-bottom: 8px; }
+.section-sub { color: var(--text-muted); text-align: center; margin-bottom: 40px; font-size: 16px; }
+.bg-light { background: var(--bg-light); }
+
+/* ===== Cards ===== */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); transition: transform 0.2s; }
+.card:hover { transform: translateY(-4px); }
+.card-icon { font-size: 36px; margin-bottom: 12px; }
+.card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.card p { color: var(--text-muted); font-size: 14px; line-height: 1.7; }
+.card-price { margin-top: 16px; font-size: 22px; font-weight: 800; color: var(--primary); }
+.card-price span { font-size: 14px; font-weight: 400; color: var(--text-muted); }
+
+/* ===== Contact ===== */
+.contact-box { background: linear-gradient(135deg, #1a56db, #1e40af); color: #fff; border-radius: 16px; padding: 48px 32px; text-align: center; }
+.contact-box h2 { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+.contact-box p { opacity: 0.9; margin-bottom: 28px; font-size: 16px; }
+.phone-link { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: #1a1a1a; padding: 16px 36px; border-radius: 12px; font-size: 22px; font-weight: 800; }
+.wechat-note { margin-top: 16px; opacity: 0.8; font-size: 14px; }
+
+/* ===== Footer ===== */
+footer { background: #111; color: #9ca3af; text-align: center; padding: 24px 20px; font-size: 13px; }
+footer a { color: #9ca3af; }
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  .hero { padding: 60px 16px 48px; }
+  .section { padding: 48px 16px; }
+  .phone-link { font-size: 18px; padding: 14px 28px; }
+}
